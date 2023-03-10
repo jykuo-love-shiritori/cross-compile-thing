@@ -1,6 +1,0 @@
-version: '3'
-services:
-  cross_compile:
-    build: .
-    volumes:
-      - $PWD/:/opt

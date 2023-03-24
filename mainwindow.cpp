@@ -8,20 +8,26 @@
 
 #include "util.h"
 
+// ! Use this
+// #define GPIO
+
 void LED_ON(unsigned int pin) {
+#ifdef GPIO
     gpio_export(pin);
     gpio_set_dir(pin, "out");
     gpio_set_value(pin, "1");
+#endif
 }
 
 void LED_OFF(unsigned int pin) {
+#ifdef GPIO
     gpio_set_value(pin, "0");
     gpio_unexport(pin);
+#endif
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), count(5), tmp(5),
-      interval(1) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), interval(1) {
     ui->setupUi(this);
     timer = new QTimer(this);
 
@@ -68,45 +74,38 @@ void MainWindow::on_pushButton_released() {
 }
 
 void MainWindow::update() {
-    if (count > 0) {
-        if (count % 2 == 0) {
-            std::cout << "g1\n";
-            ui->checkBox->setCheckState(Qt::Checked);
-            ui->checkBox_2->setCheckState(Qt::Checked);
-            ui->checkBox_3->setCheckState(Qt::Unchecked);
-            ui->checkBox_4->setCheckState(Qt::Unchecked);
-            show_image_0();
-            show_image_1();
-            hide_image_2();
-            hide_image_3();
-        } else {
-            std::cout << "g2\n";
-            ui->checkBox_3->setCheckState(Qt::Checked);
-            ui->checkBox_4->setCheckState(Qt::Checked);
-            ui->checkBox->setCheckState(Qt::Unchecked);
-            ui->checkBox_2->setCheckState(Qt::Unchecked);
-            hide_image_0();
-            hide_image_1();
-            show_image_2();
-            show_image_3();
-        }
-
-        count--;
+    if (enable) {
+        std::cout << "g1\n";
+        ui->checkBox->setCheckState(Qt::Checked);
+        ui->checkBox_2->setCheckState(Qt::Checked);
+        ui->checkBox_3->setCheckState(Qt::Unchecked);
+        ui->checkBox_4->setCheckState(Qt::Unchecked);
+        show_image_0();
+        show_image_1();
+        hide_image_2();
+        hide_image_3();
     } else {
-        std::cout << "stop\n";
-        count = tmp;
-        timer->stop();
+        std::cout << "g2\n";
+        ui->checkBox_3->setCheckState(Qt::Checked);
+        ui->checkBox_4->setCheckState(Qt::Checked);
+        ui->checkBox->setCheckState(Qt::Unchecked);
+        ui->checkBox_2->setCheckState(Qt::Unchecked);
+        hide_image_0();
+        hide_image_1();
+        show_image_2();
+        show_image_3();
     }
-    // timer->stop();
+
+    enable = !enable;
 }
+// timer->stop();
 
 void MainWindow::on_pushButton_2_clicked() {
-    std::cout << "1 " << count << "\n";
-    tmp = count;
+    timer->start(1000 - interval * 10);
+}
 
-    timer->start(interval * 10);
-
-    std::cout << "2 " << count << "\n";
+void MainWindow::on_pushButton_3_clicked() {
+    timer->stop();
 }
 
 void MainWindow::on_checkBox_stateChanged(int arg1) {
@@ -126,7 +125,7 @@ void MainWindow::on_checkBox_4_stateChanged(int arg1) {
 }
 
 void MainWindow::on_spinBox_valueChanged(int arg1) {
-    count = arg1;
+    // count = arg1;
 }
 
 void MainWindow::show_image_0() {
@@ -176,4 +175,5 @@ void MainWindow::hide_image_3() {
 }
 void MainWindow::on_horizontalSlider_valueChanged(int value) {
     interval = value;
+    timer->start(1000 - interval * 10);
 }

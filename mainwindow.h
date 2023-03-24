@@ -23,6 +23,7 @@ private slots:
     void on_pushButton_released();
 
     void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
 
     void on_checkBox_stateChanged(int arg1);
     void on_checkBox_2_stateChanged(int arg1);
@@ -50,8 +51,7 @@ private:
 
     std::array<int, 4> led_on;
 
-    int count;
-    int tmp;
+    bool enable;
 
     int interval;
 

@@ -26,6 +26,9 @@
     <property name="text">
      <string>LED0</string>
     </property>
+    <property name="shortcut">
+     <string>Q</string>
+    </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_2">
     <property name="geometry">
@@ -38,6 +41,9 @@
     </property>
     <property name="text">
      <string>LED1</string>
+    </property>
+    <property name="shortcut">
+     <string>W</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_3">
@@ -52,6 +58,9 @@
     <property name="text">
      <string>LED2</string>
     </property>
+    <property name="shortcut">
+     <string>E</string>
+    </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_4">
     <property name="geometry">
@@ -64,6 +73,9 @@
     </property>
     <property name="text">
      <string>LED3</string>
+    </property>
+    <property name="shortcut">
+     <string>R</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
@@ -78,6 +90,9 @@
     <property name="text">
      <string>shining</string>
     </property>
+    <property name="shortcut">
+     <string>T</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
@@ -89,7 +104,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>switching</string>
+     <string>switching on</string>
     </property>
     <property name="shortcut">
      <string>S</string>
@@ -239,6 +254,22 @@
      <string>Switching Speed</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>370</y>
+      <width>80</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>switching off</string>
+    </property>
+    <property name="shortcut">
+     <string>D</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -267,6 +298,22 @@
     <hint type="destinationlabel">
      <x>546</x>
      <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>584</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>655</x>
+     <y>303</y>
     </hint>
    </hints>
   </connection>

@@ -7,9 +7,12 @@
 #include <memory>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), count(5) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), count(5), tmp(5),
+      interval(1) {
     ui->setupUi(this);
     timer = new QTimer(this);
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
 MainWindow::~MainWindow() {
@@ -77,13 +80,20 @@ void MainWindow::update() {
 
         count--;
     } else {
+        std::cout << "stop\n";
+        count = tmp;
         timer->stop();
     }
+    // timer->stop();
 }
 
 void MainWindow::on_pushButton_2_clicked() {
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1000);
+    std::cout << "1 " << count << "\n";
+    tmp = count;
+
+    timer->start(interval * 10);
+
+    std::cout << "2 " << count << "\n";
 }
 
 void MainWindow::on_checkBox_stateChanged(int arg1) {
@@ -142,4 +152,7 @@ void MainWindow::hide_image_2() {
 void MainWindow::hide_image_3() {
     QLabel *image3 = ui->label_5;
     image3->hide();
+}
+void MainWindow::on_horizontalSlider_valueChanged(int value) {
+    interval = value;
 }

@@ -43,12 +43,17 @@ private slots:
     void hide_image_2();
     void hide_image_3();
 
+    void on_horizontalSlider_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
 
     std::array<int, 4> led_on;
 
     int count;
+    int tmp;
+
+    int interval;
 
     QTimer *timer;
 };

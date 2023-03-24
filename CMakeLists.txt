@@ -20,6 +20,12 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         ${TS_FILES}
+
+        util.h
+        export.cpp
+        unexport.cpp
+        set_dir.cpp
+        set_value.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

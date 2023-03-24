@@ -6,6 +6,19 @@
 #include <iostream>
 #include <memory>
 
+#include "util.h"
+
+void LED_ON(unsigned int pin) {
+    gpio_export(pin);
+    gpio_set_dir(pin, "out");
+    gpio_set_value(pin, "1");
+}
+
+void LED_OFF(unsigned int pin) {
+    gpio_set_value(pin, "0");
+    gpio_unexport(pin);
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), count(5), tmp(5),
       interval(1) {
@@ -120,38 +133,46 @@ void MainWindow::show_image_0() {
     QLabel *image = ui->label_2;
     image->setPixmap(QPixmap::fromImage(QImage("../res/speaker02.png")));
     image->show();
+    LED_ON(PIN0);
 }
 void MainWindow::show_image_1() {
     QLabel *image = ui->label_3;
     image->setPixmap(QPixmap::fromImage(QImage("../res/speaker02.png")));
     image->show();
+    LED_ON(PIN1);
 }
 void MainWindow::show_image_2() {
     QLabel *image = ui->label_4;
     image->setPixmap(QPixmap::fromImage(QImage("../res/speaker02.png")));
     image->show();
+    LED_ON(PIN2);
 }
 void MainWindow::show_image_3() {
     QLabel *image = ui->label_5;
     image->setPixmap(QPixmap::fromImage(QImage("../res/speaker02.png")));
     image->show();
+    LED_ON(PIN3);
 }
 
 void MainWindow::hide_image_0() {
     QLabel *image0 = ui->label_2;
     image0->hide();
+    LED_OFF(PIN0);
 }
 void MainWindow::hide_image_1() {
     QLabel *image1 = ui->label_3;
     image1->hide();
+    LED_OFF(PIN1);
 }
 void MainWindow::hide_image_2() {
     QLabel *image2 = ui->label_4;
     image2->hide();
+    LED_OFF(PIN2);
 }
 void MainWindow::hide_image_3() {
     QLabel *image3 = ui->label_5;
     image3->hide();
+    LED_OFF(PIN3);
 }
 void MainWindow::on_horizontalSlider_valueChanged(int value) {
     interval = value;

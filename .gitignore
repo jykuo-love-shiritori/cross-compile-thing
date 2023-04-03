@@ -2,3 +2,7 @@ aarch64_build/
 build/
 .cache/
 .vscode/
+
+dist/
+node_modules/
+

@@ -11,7 +11,7 @@
         $LEDStore = selection.map(({ index, selected }) => {
             return {
                 index,
-                enable: selected ? toggle : $LEDStore[index].enable
+                enable: selected ? toggle : !toggle
             };
         });
     };

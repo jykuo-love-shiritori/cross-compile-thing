@@ -7,7 +7,7 @@
 
     let toggle = true;
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         $LEDStore = selection.map(({ index, selected }) => {
             return {
                 index,
@@ -15,8 +15,12 @@
             };
         });
 
-        fetch('localhost:8080', {
+        await fetch('http://192.168.55.1:8080', {
             method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ led: $LEDStore.map((v) => v.enable) })
         });
     };

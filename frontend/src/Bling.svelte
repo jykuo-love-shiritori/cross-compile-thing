@@ -41,8 +41,6 @@
 <div class="flex flex-col items-center">
     <h1 class="mb-5 text-3xl">LED Go Bling Bling</h1>
 
-    {2000 / speed}
-
     <div class="mb-5 w-full items-center">
         <div>
             {#if isValid}

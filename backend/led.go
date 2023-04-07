@@ -52,10 +52,11 @@ func bling(c *gin.Context) {
 	quit := make(chan struct{})
 
 	go func() {
+		n := 0
 		for {
 			select {
 			case <-ticker.C:
-				if body.Times%2 == 0 {
+				if n%2 == 0 {
 					ledOn(LEDS[0])
 					ledOn(LEDS[1])
 					ledOff(LEDS[2])
@@ -66,8 +67,10 @@ func bling(c *gin.Context) {
 					ledOn(LEDS[2])
 					ledOn(LEDS[3])
 				}
-				body.Times -= 1
-				if body.Times <= 0 {
+
+				n += 1
+
+				if n >= body.Times {
 					close(quit)
 				}
 			case <-quit:

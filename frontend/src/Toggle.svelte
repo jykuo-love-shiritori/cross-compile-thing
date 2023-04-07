@@ -15,10 +15,10 @@
             };
         });
 
-        fetch("localhost:8080", {
-            method: "POST",
-            body: JSON.stringify($LEDStore.map(v => v.enable))
-        })
+        fetch('localhost:8080', {
+            method: 'POST',
+            body: JSON.stringify({ led: $LEDStore.map((v) => v.enable) })
+        });
     };
 </script>
 

@@ -6,5 +6,8 @@
         {
             "path": "backend"
         }
-    ]
+    ],
+    "settings": {
+        "workbench.colorTheme": "Mayukai Mono"
+    }
 }

@@ -14,6 +14,11 @@
                 enable: selected ? toggle : !toggle
             };
         });
+
+        fetch("localhost:8080", {
+            method: "POST",
+            body: JSON.stringify($LEDStore.map(v => v.enable))
+        })
     };
 </script>
 

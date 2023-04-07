@@ -15,7 +15,7 @@
             };
         });
 
-        await fetch('http://192.168.55.1:8080', {
+        await fetch('http://192.168.55.1:8080/toggle', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

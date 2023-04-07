@@ -43,7 +43,7 @@ func toggle(c *gin.Context) {
 func bling(c *gin.Context) {
 	var body struct {
 		Times    int
-		Interval int
+		Interval float32
 	}
 
 	c.Bind(&body)

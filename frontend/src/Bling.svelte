@@ -6,22 +6,33 @@
     let speedText = 'SPEED';
     let isValid = true;
 
-    const handleTimesUpdate = () => {
+    const handleTimesUpdate = async () => {
         isValid = Number.isInteger(times) && times >= 0;
     };
 
-    const handleSpeedUpdate = () => {
+    const handleSpeedUpdate = async () => {
         speedText = 'SPE' + 'E'.repeat(Math.floor(speed * 2 - 1)) + 'D';
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        fetch('http://192.168.55.1:8080/bling', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                times: times,
+                interval: 2000 / speed
+            })
+        });
+
         for (let i = 0; i < times; i++) {
-            console.log(i);
             setTimeout(() => {
-                $LEDStore[0].enable = i % 2 == 0;
-                $LEDStore[1].enable = i % 2 == 0;
-                $LEDStore[2].enable = i % 2 != 0;
-                $LEDStore[3].enable = i % 2 != 0;
+                $LEDStore[0].enable = i % 2 === 0;
+                $LEDStore[1].enable = i % 2 === 0;
+                $LEDStore[2].enable = i % 2 !== 0;
+                $LEDStore[3].enable = i % 2 !== 0;
             }, i * (2000 / speed));
         }
     };
@@ -29,6 +40,8 @@
 
 <div class="flex flex-col items-center">
     <h1 class="mb-5 text-3xl">LED Go Bling Bling</h1>
+
+    {2000 / speed}
 
     <div class="mb-5 w-full items-center">
         <div>

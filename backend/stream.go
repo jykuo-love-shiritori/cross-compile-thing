@@ -1,13 +1,22 @@
 package main
 
 import (
-	"time"
+	"log"
+	"os/exec"
 
 	"github.com/gin-gonic/gin"
 )
 
+func run(cmd string) string {
+	out, err := exec.Command(cmd).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(out)
+}
+
 func stream(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"time": time.Now().String(),
+		"value": run("./lab5-1.py"),
 	})
 }

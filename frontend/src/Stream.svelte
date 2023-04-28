@@ -3,6 +3,8 @@
 
     let interval: NodeJS.Timer | undefined;
 
+    let value = 0;
+
     const handleSubmit = async () => {
         if (stream) {
             if (!interval) {
@@ -19,6 +21,7 @@
         const data = await res.json();
 
         console.log(data);
+        value = data.value;
     };
 </script>
 
@@ -37,7 +40,9 @@
         </label>
     </div>
 
-    {interval}
+    <div class="pb-5">
+        {value}
+    </div>
 
     <button on:click={handleSubmit} class="rounded-full bg-blue-600 px-5 py-1">
         Submit

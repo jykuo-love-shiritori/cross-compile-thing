@@ -1,0 +1,40 @@
+<script lang="ts">
+    let stream = false;
+
+    let interval: NodeJS.Timer;
+
+    const handleSubmit = async () => {
+        if (stream) {
+            interval = setInterval(fetchData, 1000);
+        } else {
+            clearInterval(interval);
+        }
+    };
+
+    const fetchData = async () => {
+        const res = await fetch('http://localhost:8080/stream');
+        const data = await res.json();
+
+        console.log(data);
+    };
+</script>
+
+<div class="flex flex-col items-center">
+    <h1 class="mb-5 text-3xl">Stream</h1>
+
+    <div class="pb-5">
+        <label class="mx-3">
+            <input type="radio" bind:group={stream} value={true} />
+            ON
+        </label>
+
+        <label class="mx-3">
+            <input type="radio" bind:group={stream} value={false} />
+            OFF
+        </label>
+    </div>
+
+    <button on:click={handleSubmit} class="rounded-full bg-blue-600 px-5 py-1">
+        Submit
+    </button>
+</div>

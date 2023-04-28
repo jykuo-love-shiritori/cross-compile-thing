@@ -13,6 +13,7 @@ func main() {
 
 	r.POST("/toggle", toggle)
 	r.POST("/bling", bling)
+	r.GET("/stream", stream)
 
 	r.Run()
 }

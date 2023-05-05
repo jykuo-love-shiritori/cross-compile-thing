@@ -14,14 +14,14 @@ var LEDS = [4]int{
 }
 
 func ledOn(pin int) {
-	export(pin)
+	// export(pin)
 	setDir(pin, "out")
 	setValue(pin, 1)
 }
 
 func ledOff(pin int) {
 	setValue(pin, 0)
-	unexport(pin)
+	// unexport(pin)
 }
 
 func toggle(c *gin.Context) {

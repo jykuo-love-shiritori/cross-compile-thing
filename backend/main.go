@@ -6,6 +6,10 @@ import (
 )
 
 func main() {
+	for i := range LEDS {
+		export(i)
+	}
+
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
 

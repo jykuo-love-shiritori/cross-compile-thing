@@ -1,4 +1,6 @@
 <script lang="ts">
+    import LEDStore from "./LEDStore";
+
     let stream = false;
 
     let interval: NodeJS.Timer | undefined;
@@ -22,6 +24,11 @@
 
         console.log(data);
         value = data.value;
+
+        $LEDStore[0].enable = value >= 500;
+        $LEDStore[1].enable = value >= 500;
+        $LEDStore[2].enable = value < 500;
+        $LEDStore[3].enable = value < 500;
     };
 </script>
 

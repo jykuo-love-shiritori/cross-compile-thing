@@ -49,7 +49,7 @@ photo_ch=0
 def init():
 #GPIO BOARD GPIO.BCH GPIO.CVM GPIO. TEGRA SOC
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.HIGH) 
+    # GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.HIGH) 
     GPIO.setwarnings(False)
     GPIO.cleanup() #clean up at the end of your script
     GPIO.setmode(GPIO.BCM) #to specify whilch pin numbering system

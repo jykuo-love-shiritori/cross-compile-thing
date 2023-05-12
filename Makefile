@@ -1,26 +1,34 @@
-KDIR = /lib/modules/`uname -r`/build
+.PHONY: all
+all: module client
 
-kbuild:
-	make -C $(KDIR) M=`pwd`
+.PHONY: module
+module:
+	@echo "BUILD MO"
+	@make -C ./module kbuild
 
-clean:
-	make -C $(KDIR) M=`pwd` clean
+.PHONY: module-install module-uninstall
+module-install:
+	make -C ./module install
 
-cbuild: clean kbuild
+module-uninstall:
+	make -C ./module uninstall
 
-shrek.ko: kbuild
+.PHONY: reinstall
+reinstall: module-uninstall module-install
 
-install: shrek.ko
-	sudo insmod ./shrek.ko
-
-uninstall:
-	sudo rmmod ./shrek.ko
-
-reinstall: uninstall install
+.PHONY: client
+client:
+	@echo "BUILD C"
+	@make -C ./client
 
 create-dev:
 	#          name           type major minor
 	sudo mknod /dev/sexyshrek c    69    69
 
 remove-dev:
-	sudo rm /dev/sexyshrek
+	sudo rm /dev/sexyshrek -f
+
+.PHONY: clean
+clean: remove-dev
+	make -C ./module clean
+	make -C ./client clean

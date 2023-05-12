@@ -6,8 +6,21 @@ kbuild:
 clean:
 	make -C $(KDIR) M=`pwd` clean
 
-install:
-	sudo insmod ./mod.ko
+cbuild: clean kbuild
+
+shrek.ko: kbuild
+
+install: shrek.ko
+	sudo insmod ./shrek.ko
 
 uninstall:
-	sudo rmmod ./mod.ko
+	sudo rmmod ./shrek.ko
+
+reinstall: uninstall install
+
+create-dev:
+	#          name           type major minor
+	sudo mknod /dev/sexyshrek c    69    69
+
+remove-dev:
+	sudo rm /dev/sexyshrek

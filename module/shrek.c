@@ -63,7 +63,7 @@ static ssize_t drv_read(struct file *file,
                         loff_t *offset)
 {
 	pr_info("read!");
-	raw_copy_from_user(buf, shrek_text, size);
+	__arch_copy_from_user(buf, shrek_text, size);
 	return (ssize_t)69;
 }
 
@@ -78,7 +78,7 @@ static ssize_t drv_write(struct file *file,
 	}
 	
 	shrek_count++;
-	raw_copy_from_user(shrek_text, buf, size);
+	__arch_copy_from_user((shrek_text, buf, size);
 	shrek_text[size-1] = '\0';
 	pr_info("write %d time!", shrek_count);
 	pr_info("text: %s", shrek_text);

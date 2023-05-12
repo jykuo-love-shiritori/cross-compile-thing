@@ -1,3 +1,5 @@
+obj-m := shrek.o
+
 KDIR = /lib/modules/`uname -r`/build
 
 kbuild:

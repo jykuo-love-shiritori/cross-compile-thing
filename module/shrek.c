@@ -22,19 +22,24 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 
-#include <asm/uaccess.h>
+// #include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Shrek module for Web Designing Lab");
 MODULE_AUTHOR("Team Leader, Group 15");
 MODULE_VERSION("0.69");
 
+//#define ON_TX2
+#ifdef ON_TX2
+#define COPY_FROM_USER __arch_copy_from_user
+#else
+//#define COPY_FROM_USER _copy_from_user
+#define COPY_FROM_USER raw_copy_from_user
+#endif /* ON_TX2 */
 
 #define TEXT_SIZE 1024
 
-static dev_t shrek_dev = 0;
-//static struct cdev *shrek_cdev;
-//static struct class *shrek_class;
 //static DEFINE_MUTEX(shrek_mutex);
 static char shrek_text[TEXT_SIZE];
 static unsigned int shrek_count = 0;
@@ -43,6 +48,7 @@ static unsigned int shrek_count = 0;
 static int drv_open(struct inode *inode, struct file *file)
 {
 	pr_info("open!");
+
 	//if (!mutex_trylock(&shrek_mutex)) {
 	//	pr_alert("shrekdrv is in use");
 	//	return -EBUSY;
@@ -63,7 +69,7 @@ static ssize_t drv_read(struct file *file,
                         loff_t *offset)
 {
 	pr_info("read!");
-	__arch_copy_from_user(buf, shrek_text, size);
+	COPY_FROM_USER(buf, shrek_text, size);
 	return (ssize_t)69;
 }
 
@@ -78,7 +84,7 @@ static ssize_t drv_write(struct file *file,
 	}
 	
 	shrek_count++;
-	__arch_copy_from_user((shrek_text, buf, size);
+	COPY_FROM_USER(shrek_text, buf, size);
 	shrek_text[size-1] = '\0';
 	pr_info("write %d time!", shrek_count);
 	pr_info("text: %s", shrek_text);
@@ -121,47 +127,10 @@ static int __init sexy_shrek_init(void)
 		       rc);
 		return rc;
 	}
-	goto return_section;
 
-//	shrek_cdev = cdev_alloc();
-//    if (shrek_cdev == NULL) {
-//        pr_alert("Failed to alloc cdev");
-//        rc = -1;
-//        goto failed_cdev;
-//    }
-//
-//    shrek_cdev->ops = &drv_fops;
-//    rc = cdev_add(shrek_cdev, shrek_dev, 69);
-//    if (rc < 0) {
-//        pr_alert("Failed to add cdev");
-//        rc = -2;
-//        goto failed_cdev;
-//    }
-//
-//    shrek_class = class_create(THIS_MODULE, DEV_SHREK_NAME);
-//    if (!shrek_class) {
-//        pr_alert("Failed to create device class");
-//        rc = -3;
-//        goto failed_class_create;
-//    }
-//
-//	if (!device_create(shrek_class, NULL, shrek_dev, NULL, DEV_SHREK_NAME)) {
-//        pr_alert("Failed to create device");
-//        rc = -4;
-//        goto failed_device_create;
-//    }
-//
-  return_section:
 	pr_info("iM iN\n");
 	//pr_info("but this is debug\n");
 	return rc;
-//  failed_device_create:
-//    class_destroy(shrek_class);
-//  failed_class_create:
-//    cdev_del(shrek_cdev);
-//  failed_cdev:
-//    unregister_chrdev_region(shrek_dev, 1);
-//    return rc;
 }
 
 static void __exit sexy_shrek_exit(void)

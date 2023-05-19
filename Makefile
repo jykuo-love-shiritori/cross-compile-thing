@@ -1,3 +1,7 @@
+no:
+	@echo "DON'T USE THIS"
+
+
 .PHONY: all
 all: module client
 

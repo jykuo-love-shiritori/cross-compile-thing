@@ -1,4 +1,5 @@
 EXTRA_CFLAGS = -Wall -g
 
-obj-m        = shrek.o
+obj-m        = shrek-led.o
+shrek-led-y = shrek.o test.o
 

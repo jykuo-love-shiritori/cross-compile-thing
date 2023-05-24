@@ -8,7 +8,7 @@
 #ifndef SHREK_GPIO_H
 #define SHREK_GPIO_H
 
-#include <stdbool.h>
+#include <linux/kernel.h> /* include stdbool.h */
 
 /*
  * GPIO Sysfs Interface for Userspace:
@@ -24,7 +24,7 @@
  * Return: true if success. false if not, and errno is set to indicate the error
  * for write().
  */
-static bool gpio_export(unsigned int pin);
+bool gpio_export(unsigned int pin);
 
 /**
  * gpio_unexport - reverses the effect of exporting to userspace.
@@ -33,7 +33,7 @@ static bool gpio_export(unsigned int pin);
  * Return: true if success. false if not, and errno is set to indicate the error
  * for write().
  */
-static bool gpio_unexport(unsigned int pin);
+bool gpio_unexport(unsigned int pin);
 
 /**
  * gpio_set_dir - set direction of GPIO
@@ -43,7 +43,7 @@ static bool gpio_unexport(unsigned int pin);
  * Return: true if success. false if not, and errno is set to indicate the error
  * for write().
  */
-static bool gpio_set_dir(unsigned int gpio, const char *dirStatus);
+bool gpio_set_dir(unsigned int gpio, const char *dirStatus);
 
 /**
  * gpio_set_value - set value of GPIO
@@ -56,7 +56,7 @@ static bool gpio_set_dir(unsigned int gpio, const char *dirStatus);
  * Return: true if success. false if not, and errno is set to indicate the error
  * for write().
  */
-static bool gpio_set_value(unsigned int gpio, const char *value);
+bool gpio_set_value(unsigned int gpio, const char *value);
 
 /**
  * gpio_read_value - read value of GPIO
@@ -64,7 +64,7 @@ static bool gpio_set_value(unsigned int gpio, const char *value);
  *
  * Return: 1 if high. 0 if low;
  */
-static int gpio_read_value(unsigned int gpio);
+int gpio_read_value(unsigned int gpio);
 
 #endif /* SHREK_GPIO_H */
 

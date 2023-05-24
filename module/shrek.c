@@ -21,6 +21,8 @@
 // #include <asm/uaccess.h>
 // #include <linux/uaccess.h>
 
+#include "gpio.h"
+
 MODULE_LICENSE("WTFPL");
 MODULE_DESCRIPTION("Shrek module for Web Designing Lab");
 MODULE_AUTHOR("Team Leader, Group 15");
@@ -116,79 +118,7 @@ const struct file_operations drv_fops = {
 	.release = drv_release,
 	.llseek = drv_device_lseek,
 };
-static int gpio_export(unsigned int gpio) {
-	int len;
-	char buf[64];
-	struct file *fp;
-	fp = filp_open("/sys/class/gpio/export", O_WRONLY,0);
-	if (fp < 0) {
-		pr_err("gpio/export");
-		return 1;
-	}
 
-	len = snprintf(buf, sizeof(buf), "%d", gpio);
-
-	vfs_write(fp, buf, len,NULL);
-	filp_close(fp,NULL);
-
-	return 0;
-}
-static int gpio_set_dir(unsigned int gpio, const char *dirStatus) {
-	char buf[64];
-
-	snprintf(buf, sizeof(buf), "/sys/class/gpio/gpio%d/direction", gpio);
-
-	struct file *fp;
-	fp = filp_open(buf, O_WRONLY,0);
-
-	if (fp< 0) {
-		pr_err("gpio/direction");
-		return fp;
-	}
-
-	
-
-	vfs_write(fp, dirStatus, 4,NULL);
-
-	filp_close(fp,NULL);
-	return 0;
-}
-static int gpio_set_value(unsigned int gpio, const char *value) {
-	struct file *fp;
-	char buf[64];
-
-	snprintf(buf, sizeof(buf), "/sys/class/gpio/gpio%d/value", gpio);
-
-	fp = filp_open(buf, O_WRONLY,0);
-
-	if (fp< 0) {
-		pr_err("gpio/direction");
-		return fp;
-	}
-
-	
-
-	vfs_write(fp, value, 2,NULL);
-
-	filp_close(fp,NULL);
-	return 0;
-}
-static int gpio_unexport(unsigned int gpio) {
-	int len;
-	char buf[64];
-	struct file *fp;
-	fp = filp_open("/sys/class/gpio/unexport", O_WRONLY,0);
-	if (fp< 0) {
-		pr_err("gpio/unexport");
-		return fp;
-	}
-
-	len = snprintf(buf, sizeof(buf), "%d", gpio);
-
-	vfs_write(fp, buf, len,NULL);
-	filp_close(fp,NULL);
-	return 0;
-}
 static int __init sexy_shrek_init(void)
 {
 	int rc = 0;

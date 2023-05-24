@@ -6,9 +6,10 @@
  */
 #include "gpio.h"
 
+#include "shrek.h"
+
 #include <linux/fs.h>
 
-#define GPIO_DIR "/sys/class/gpio/"
 
 /*
  * kernel fs read/write changed in 4.14
@@ -29,6 +30,8 @@
  * on TX2
  */
 
+#define GPIO_DIR "/sys/class/gpio/"
+
 bool gpio_export(unsigned int gpio) {
 	size_t ret;
 	size_t len;
@@ -38,7 +41,7 @@ bool gpio_export(unsigned int gpio) {
 	char buf[64];
 
 	fp = filp_open(GPIO_DIR "export", O_WRONLY, 0);
-	if (fp < 0) {
+	if (IS_ERR(fp)) {
 		pr_err("error: gpio/export open");
 		return false;
 	}
@@ -70,7 +73,7 @@ bool gpio_set_dir(unsigned int gpio, const char *dirStatus) {
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/direction", gpio);
 
 	fp = filp_open(buf, O_WRONLY, 0);
-	if (fp < 0) {
+	if (IS_ERR(fp)) {
 		pr_err("error: gpio/direction open");
 		return false;
 	}
@@ -102,7 +105,7 @@ bool gpio_set_value(unsigned int gpio, const char *value) {
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/value", gpio);
 
 	fp = filp_open(buf, O_WRONLY, 0);
-	if (fp < 0) {
+	if (IS_ERR(fp)) {
 		pr_err("error: gpio/value open");
 		return false;
 	}
@@ -132,7 +135,7 @@ bool gpio_unexport(unsigned int gpio) {
 	char buf[64];
 
 	fp = filp_open(GPIO_DIR "unexport", O_WRONLY, 0);
-	if (fp < 0) {
+	if (IS_ERR(fp)) {
 		pr_err("error: gpio/unexport open");
 		return false;
 	}
@@ -165,7 +168,7 @@ int gpio_read_value(unsigned int gpio) {
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/value", gpio);
 
 	fp = filp_open(buf, O_RDONLY, 0);
-	if (fp < 0) {
+	if (IS_ERR(fp)) {
 		pr_err("error: gpio/value open");
 		return -1;
 	}

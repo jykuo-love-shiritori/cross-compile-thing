@@ -8,27 +8,15 @@
 #define SHREK_DEV "/dev/sexyshrek"
 
 int main() {
-	long long sz;
+	int fd;
+	char data[2];
 
-	//int fd = open(SHREK_DEV, O_RDWR);
-	FILE *fp = fopen(SHREK_DEV, "w+");
-	if (fp == NULL) {
-		perror("Failed to open character device");
-		exit(1);
-	}
-	char buf[1024];
-	char buf2[1024] = "";
+	fd = open(SHREK_DEV, O_RDWR);
 
-	char bufa[1024] = "GET OUT OF MY SWAMP!";
-	fwrite(bufa, 20, 1, fp);
-	fread(buf2, 100, 1, fp);
-	printf("read: %s\n", buf2);
+	write(fd, "1", 2);
+	read(fd, data, 2);
 
-	char bufb[1024] = "CLEAR STRING";
-	fwrite(bufb, 20, 1, fp);
-	fread(buf2, 100, 1, fp);
-	printf("read: %s\n", buf2);
-	fclose(fp);
-	return 0;
+    close(fd);
+    return 0;
 }
 

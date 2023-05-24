@@ -13,13 +13,14 @@ cbuild: clean kbuild
 shrek.ko: kbuild
 
 install: shrek.ko
-	sudo insmod ./shrek.ko
+	sudo insmod ./shrek-led.ko
+	#sudo cat /proc/devices | grep sexyshrek
 	#          name           type major minor
 	sudo mknod /dev/sexyshrek c    69    69
 
 uninstall:
-	sudo rmmod shrek
-	sudo rm /dev/sexyshrek
+	sudo rmmod shrek-led
+	sudo rm -f /dev/sexyshrek
 
-reinstall: uninstall install
-
+test:
+	./script/test.sh

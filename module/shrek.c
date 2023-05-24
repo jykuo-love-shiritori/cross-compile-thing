@@ -1,42 +1,30 @@
 /* SPDX-License-Identifier: WTFPL */
 
-#define MODULE_NAME "sexy_shrek"
-#define MAJOR_NUM 69
-#define MINOR_NUM 69
+#include "shrek.h"
 
-#define DEV_SHREK_NAME "sexyshrek"
-
-
-/**
+/*
  * pr_fmt - used by the pr_*() macros to generate the printk format string
  * docs: https://github.com/torvalds/linux/blame/fc4354c6e5c21257cf4a50b32f7c11c7d65c55b3/include/linux/printk.h#L331-L347
  */
 #define pr_fmt(fmt) MODULE_NAME ": " fmt
 
-#include <linux/cdev.h>
-#include <linux/device.h>
-#include <linux/fs.h>
-#include <linux/init.h>
-#include <linux/kdev_t.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/mutex.h>
+#include <linux/init.h>             /* module_init, module_exit         */
+
+#include <linux/fs.h>               /* copy_from_user                   */
+// #include <linux/cdev.h>
+// #include <linux/device.h>
+// #include <linux/kdev_t.h>
+// #include <linux/mutex.h>
 
 // #include <asm/uaccess.h>
-#include <linux/uaccess.h>
+// #include <linux/uaccess.h>
 
-MODULE_LICENSE("GPL");
+MODULE_LICENSE("WTFPL");
 MODULE_DESCRIPTION("Shrek module for Web Designing Lab");
 MODULE_AUTHOR("Team Leader, Group 15");
 MODULE_VERSION("0.69");
-
-//#define ON_TX2
-#ifdef ON_TX2
-#define COPY_FROM_USER __arch_copy_from_user
-#else
-//#define COPY_FROM_USER _copy_from_user
-#define COPY_FROM_USER raw_copy_from_user
-#endif /* ON_TX2 */
 
 #define PIN0 396
 #define PIN1 392
@@ -73,8 +61,14 @@ static ssize_t drv_read(struct file *file,
                         size_t size,
                         loff_t *offset)
 {
+	int ret = 0;
+
 	pr_info("read!");
-	COPY_FROM_USER(buf, shrek_text, size);
+	ret = copy_from_user(buf, shrek_text, size);
+	if( ret != 0 ) {
+		pr_err("copy error");
+	}
+
 	return (ssize_t)69;
 }
 
@@ -83,17 +77,22 @@ static ssize_t drv_write(struct file *file,
                          size_t size,
                          loff_t *offset)
 {
+	int ret = 0;
 	pr_info("write called!");
 	if(size >= TEXT_SIZE) {
 		size = TEXT_SIZE;
 	}
 	
 	shrek_count++;
-	COPY_FROM_USER(shrek_text, buf, size);
+	ret = copy_from_user(shrek_text, buf, size);
+	if( ret != 0 ) {
+		pr_err("copy error");
+	}
+
 	shrek_text[size-1] = '\0';
 	pr_info("write %d time!", shrek_count);
 	pr_info("text: %s", shrek_text);
-	pr_info("size: %d", size);
+	pr_info("size: %d", (int)size);
 	return size;
 }
 
@@ -245,3 +244,4 @@ module_init(sexy_shrek_init);
 module_exit(sexy_shrek_exit);
 
 // https://stackoverflow.com/questions/40012229/opening-a-device-file-fails-due-to-no-such-device-or-address
+

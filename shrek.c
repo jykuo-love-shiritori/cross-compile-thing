@@ -12,14 +12,14 @@
 #include <linux/module.h>
 #include <linux/init.h>             /* module_init, module_exit         */
 
-#include <linux/fs.h>               /* copy_from_user                   */
+#include <linux/fs.h>               /* file_operations */
 // #include <linux/cdev.h>
 // #include <linux/device.h>
 // #include <linux/kdev_t.h>
 // #include <linux/mutex.h>
 
 // #include <asm/uaccess.h>
-// #include <linux/uaccess.h>
+#include <linux/uaccess.h> /* copy_from_user on TX2 */
 
 #include "gpio.h"
 

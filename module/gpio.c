@@ -4,88 +4,107 @@
  * Change to kernel module version:
  *         Memner A <noreply@ntut.edu.tw>
  */
-/* WIP by Team Leader */
-
 #include "gpio.h"
 
-#include "fs.h"
+#include <linux/fs.h>
+#include "fs.h"       /* FILE_OPEN() */
 
 #define GPIO_DIR "/sys/class/gpio/"
 
-int gpio_export(unsigned int gpio) {
+bool gpio_export(unsigned int gpio) {
+	int ret;
 	int len;
 	char buf[64];
 	struct file *fp;
-	fp = filp_open(GPIO_DIR "export", O_WRONLY,0);
+
+	fp = FILP_OPEN(GPIO_DIR "export", O_WRONLY,0);
 	if (fp < 0) {
-		pr_err("gpio/export");
-		return 1;
+		pr_err("error: gpio/export open");
+		return false;
 	}
 
 	len = snprintf(buf, sizeof(buf), "%d", gpio);
+	ret = kernel_write(fp, buf, len,NULL);
+	if (ret != len) {
+		pr_err("error: gpio/export write");
+		return false;
+	}
 
-	vfs_write(fp, buf, len,NULL);
 	filp_close(fp,NULL);
 
-	return 0;
+	return true;
 }
 
-int gpio_set_dir(unsigned int gpio, const char *dirStatus) {
+bool gpio_set_dir(unsigned int gpio, const char *dirStatus) {
+	int ret;
 	char buf[64];
+	struct file *fp;
 
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/direction", gpio);
 
-	struct file *fp;
-	fp = filp_open(buf, O_WRONLY,0);
-
-	if (fp< 0) {
-		pr_err("gpio/direction");
-		return fp;
+	fp = FILP_OPEN(buf, O_WRONLY,0);
+	if (fp < 0) {
+		pr_err("error: gpio/direction open");
+		return false;
 	}
 
-	
-
-	vfs_write(fp, dirStatus, 4,NULL);
+	ret = kernel_write(fp, dirStatus, 4,NULL);
+	if (ret != strlen(dirStatus)) {
+		pr_err("error: gpio/direction open");
+		return false;
+	}
 
 	filp_close(fp,NULL);
-	return 0;
+
+	return true;
 }
 
-int gpio_set_value(unsigned int gpio, const char *value) {
+bool gpio_set_value(unsigned int gpio, const char *value) {
+	int ret;
 	struct file *fp;
 	char buf[64];
 
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/value", gpio);
 
-	fp = filp_open(buf, O_WRONLY,0);
-
-	if (fp< 0) {
-		pr_err("gpio/direction");
-		return fp;
+	fp = FILP_OPEN(buf, O_WRONLY,0);
+	if (fp < 0) {
+		pr_err("error: gpio/value open");
+		return false;
 	}
 
-	
-
-	vfs_write(fp, value, 2,NULL);
+	ret = kernel_write(fp, value, 2,NULL);
+	if (ret != strlen(value)) {
+		pr_err("error: gpio/value write");
+		return false;
+	}
 
 	filp_close(fp,NULL);
-	return 0;
+
+	return true;
 }
 
-int gpio_unexport(unsigned int gpio) {
+bool gpio_unexport(unsigned int gpio) {
+	int ret;
 	int len;
 	char buf[64];
 	struct file *fp;
-	fp = filp_open(GPIO_DIR "unexport", O_WRONLY,0);
+
+	fp = FILP_OPEN(GPIO_DIR "unexport", O_WRONLY,0);
 	if (fp< 0) {
-		pr_err("gpio/unexport");
-		return fp;
+		pr_err("gpio/unexport open");
+		return false;
 	}
 
 	len = snprintf(buf, sizeof(buf), "%d", gpio);
 
-	vfs_write(fp, buf, len,NULL);
+	ret = kernel_write(fp, buf, len,NULL);
+	if (ret != len) {
+		pr_err("error: gpio/export write");
+		return false;
+	}
+
 	filp_close(fp,NULL);
-	return 0;
+
+	return true;
 }
 

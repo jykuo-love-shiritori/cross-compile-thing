@@ -9,7 +9,7 @@
 
 #ifndef KERNEL_4_12_BEFORE
 /* kernel 4.12 or later BEGIN */
-#define FILP_OPEN(path, flags, rights) file_open(path, flags, rights)
+#define FILP_OPEN(path, flags, rights) filp_open(path, flags, rights)
 /* kernel 4.12 or later END */
 
 #else /* KERNEL_4_12_BEFORE */

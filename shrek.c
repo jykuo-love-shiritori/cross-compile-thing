@@ -35,6 +35,8 @@ MODULE_VERSION("0.69");
 #define PIN2 255
 #define PIN3 254
 
+#define BUF_SIZE 8
+
 static int shrek_major = 69;
 static int shrek_minor = 69;
 static int shrek_nr_devs = 1;
@@ -66,12 +68,18 @@ static int drv_release(struct inode *inode, struct file *file)
 static ssize_t drv_read(struct file *file, char *buf, size_t size, loff_t *offset)
 {
 	int ret = 0;
+	char value[BUF_SIZE];
 
 	pr_debug("read called");
-//	ret = copy_to_user(buf, shrek_text, size);
-//	if( ret != 0 ) {
-//		pr_err("copy error");
-//	}
+	if ( ! gpio_read_value(lednum, value) ) {
+		pr_err("gpio read error");
+		return -1;
+	}
+	ret = copy_to_user(buf, value, strlen(value));
+	if( ret != 0 ) {
+		pr_err("read: copy error");
+		return -1;
+	}
 
 	return 0;
 }
@@ -79,21 +87,30 @@ static ssize_t drv_read(struct file *file, char *buf, size_t size, loff_t *offse
 static ssize_t drv_write(struct file *file, const char *buf, size_t size, loff_t *offset)
 {
 	int ret = 0;
+	char buf2[BUF_SIZE];
 
 	pr_debug("write called");
-//	ret = copy_from_user(shrek_text, buf, size);
-//	if( ret != 0 ) {
-//		pr_err("copy error");
-//	}
-	return 0;
+	ret = copy_from_user(buf2, buf, size);
+	if( ret != 0 ) {
+		pr_err("write: copy error");
+	}
+	return gpio_set_value(lednum, buf);
 }
 
 /* llseek operation is skipped */
 static loff_t drv_device_lseek(struct file *file, loff_t offset, int orig)
 {
 	pr_debug("lseek LED %d", (int)offset);
-	lednum = offset;
-	return 1;
+	switch(offset) {
+		case 0: lednum = PIN0; break;
+		case 1: lednum = PIN1; break;
+		case 2: lednum = PIN2; break;
+		case 3: lednum = PIN3; break;
+		default:
+			lednum = offset;
+			break;
+	}
+	return lednum;
 }
 
 /*
@@ -109,17 +126,22 @@ const struct file_operations shrek_fops = {
 	.llseek = drv_device_lseek,
 };
 
-static void gpio_setup(unsigned int pin) {
-	gpio_export(pin);
-	gpio_set_dir(pin, "out");
-	gpio_set_value(pin, "1");
+static bool gpio_setup(unsigned int pin) {
+	bool rc = false;
+	rc = gpio_export(pin);
+	if (!rc) return false;
+	rc = gpio_set_dir(pin, "out");
+	if (!rc) return false;
+	//rc = gpio_set_value(pin, "1");
+	//if (!rc) return false;
+	return true;
 }
 
 static int __init sexy_shrek_init(void)
 {
 	int rc = 0;
 
-//	gpio_setup(PIN0);
+	gpio_setup(PIN0);
 //	gpio_setup(PIN1);
 //	gpio_setup(PIN2);
 //	gpio_setup(PIN3);
@@ -197,7 +219,7 @@ static void __exit sexy_shrek_exit(void)
 //	gpio_unexport(PIN3);
 //	gpio_unexport(PIN2);
 //	gpio_unexport(PIN1);
-//	gpio_unexport(PIN0);
+	gpio_unexport(PIN0);
 //	mutex_destroy(&shrek_mutex);
     device_destroy(shrek_class, shrek_dev);
     class_destroy(shrek_class);

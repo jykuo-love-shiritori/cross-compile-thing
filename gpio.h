@@ -62,9 +62,10 @@ bool gpio_set_value(unsigned int gpio, const char *value);
  * gpio_read_value - read value of GPIO
  * @pin: GPIO Pin#
  *
- * Return: 1 if high. 0 if low;
+ * Return: true if success. false if not, and errno is set to indicate the error
+ * for read().
  */
-int gpio_read_value(unsigned int gpio);
+bool gpio_read_value(const unsigned int gpio, char *value);
 
 #endif /* SHREK_GPIO_H */
 

@@ -10,3 +10,4 @@
  */
 #define DEBUG
 
+#define SHREK_ON_TX2

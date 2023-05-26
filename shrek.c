@@ -7,6 +7,7 @@
  * docs: https://github.com/torvalds/linux/blame/fc4354c6e5c21257cf4a50b32f7c11c7d65c55b3/include/linux/printk.h#L331-L347
  */
 #define pr_fmt(fmt) MODULE_NAME ": " fmt
+#define BUF_SIZE 64
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -18,8 +19,8 @@
 // #include <linux/kdev_t.h>
 // #include <linux/mutex.h>
 
-// #include <asm/uaccess.h>
-#include <linux/uaccess.h> /* copy_from_user on TX2 */
+#include <asm/uaccess.h>
+//#include <linux/uaccess.h> /* copy_from_user on TX2 */
 
 #include "gpio.h"
 
@@ -42,75 +43,74 @@ static loff_t lednum;
 
 static int drv_open(struct inode *inode, struct file *file)
 {
-	pr_info("open!");
-
-	//if (!mutex_trylock(&shrek_mutex)) {
-	//	pr_alert("shrekdrv is in use");
-	//	return -EBUSY;
-	//}
+	pr_debug("open called");
+//	if (!mutex_trylock(&shrek_mutex)) {
+//		pr_alert("shrekdrv is in use");
+//		return -EBUSY;
+//	}
 	return 0;
 }
 
 static int drv_release(struct inode *inode, struct file *file)
 {
-	pr_info("release!");
-	//mutex_unlock(&shrek_mutex);
+	pr_debug("release called");
+//	mutex_unlock(&shrek_mutex);
 	return 0;
 }
 
-static ssize_t drv_read(struct file *file,
-                        char *buf,
-                        size_t size,
-                        loff_t *offset)
+static ssize_t drv_read(struct file *file, char *_user_buf, size_t size, loff_t *offset)
 {
 	int ret = 0;
+	char value[BUF_SIZE];
 
-	pr_info("read!");
-	ret = copy_from_user(buf, shrek_text, size);
+	pr_debug("read called");
+	if ( ! gpio_read_value(lednum, value) ) {
+		pr_err("gpio read error");
+		return -1;
+	}
+	ret = copy_to_user(_user_buf, value, strlen(value));
 	if( ret != 0 ) {
-		pr_err("copy error");
+		pr_err("read: copy error");
+		return -1;
 	}
 
-	return (ssize_t)69;
+	return 0;
 }
 
-static ssize_t drv_write(struct file *file,
-                         const char *buf,
-                         size_t size,
-                         loff_t *offset)
+static ssize_t drv_write(struct file *file, const char *_user_buf, size_t size, loff_t *offset)
 {
 	int ret = 0;
-	pr_info("write called!");
-	if(size >= TEXT_SIZE) {
-		size = TEXT_SIZE;
-	}
-	
-	shrek_count++;
-	ret = copy_from_user(shrek_text, buf, size);
-	if( ret != 0 ) {
-		pr_err("copy error");
-	}
+	char buf[BUF_SIZE];
 
-	shrek_text[size-1] = '\0';
-	pr_info("write %d time!", shrek_count);
-	pr_info("text: %s", shrek_text);
-	pr_info("size: %d", (int)size);
-	return size;
+	pr_debug("write called");
+	ret = copy_from_user(buf, _user_buf, size);
+	if( ret != 0 ) {
+		pr_err("write: copy error");
+	}
+	return gpio_set_value(lednum, buf);
 }
 
 /* llseek operation is skipped */
 static loff_t drv_device_lseek(struct file *file, loff_t offset, int orig)
 {
-	pr_info("lseek LED %d", (int)offset);
-	lednum= offset;
-	return 1;
+	pr_debug("lseek LED %d", (int)offset);
+	switch(offset) {
+		case 0: lednum = PIN0; break;
+		case 1: lednum = PIN1; break;
+		case 2: lednum = PIN2; break;
+		case 3: lednum = PIN3; break;
+		default:
+			lednum = offset;
+			break;
+	}
+	return lednum;
 }
 
-/**
+/*
  * The file_operations Structure : Character Device Drivers
  * https://tldp.org/LDP/lkmpg/2.4/html/c577.htm
  */
-const struct file_operations drv_fops = {
+const struct file_operations shrek_fops = {
 	.owner = THIS_MODULE,
 	.read = drv_read,
 	.write = drv_write,
@@ -139,7 +139,7 @@ static int __init sexy_shrek_init(void)
     // Let's register the device
     // This will dynamically allocate the major number
 	//rc = alloc_chrdev_region(&shrek_dev, MAJOR_NUM, MINOR_NUM, DEV_SHREK_NAME);
-	rc =  register_chrdev(MAJOR_NUM, MODULE_NAME, &drv_fops);
+	rc =  register_chrdev(MAJOR_NUM, MODULE_NAME, &shrek_fops);
 	if (rc < 0) {
 		pr_alert("Failed to register the shrek char device. rc = %i",
 		       rc);

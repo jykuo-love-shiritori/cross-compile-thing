@@ -107,6 +107,7 @@ bool gpio_set_value(unsigned int gpio, const char *value) {
 	fp = filp_open(buf, O_WRONLY, 0);
 	if (IS_ERR(fp)) {
 		pr_err("error: gpio/value open");
+		pr_err("%s", buf);
 		return false;
 	}
 

@@ -1,4 +1,5 @@
-obj-m := shrek.o
+obj-m        = shrek-led.o
+shrek-led-y = shrek.o gpio.o
 
 KDIR = /lib/modules/`uname -r`/build
 
@@ -12,13 +13,13 @@ cbuild: clean kbuild
 
 shrek.ko: kbuild
 
-install: shrek.ko
-	sudo insmod ./shrek.ko
+install: shrek.ko Kbuild
+	sudo insmod ./shrek-led.ko
 	#          name           type major minor
 	sudo mknod /dev/sexyshrek c    69    69
 
 uninstall:
-	sudo rmmod shrek
+	sudo rmmod shrek-led
 	sudo rm /dev/sexyshrek
 
 reinstall: uninstall install

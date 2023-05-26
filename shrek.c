@@ -68,7 +68,8 @@ static ssize_t drv_read(struct file *file, char *_user_buf, size_t size, loff_t 
 		pr_err("gpio read error");
 		return -1;
 	}
-	ret = copy_to_user(_user_buf, value, strlen(value));
+	pr_alert(">%s<%d", value, strlen(value));
+	ret = copy_to_user(_user_buf, value, size);
 	if( ret != 0 ) {
 		pr_err("read: copy error");
 		return -1;

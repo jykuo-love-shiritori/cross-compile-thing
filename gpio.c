@@ -4,6 +4,7 @@
  * Change to kernel module version:
  *         Memner A <noreply@ntut.edu.tw>
  */
+#define pr_fmt(fmt) "gpio.c: " fmt
 #include "gpio.h"
 
 #include "shrek.h"
@@ -31,6 +32,7 @@
  */
 
 #define GPIO_DIR "/sys/class/gpio/"
+#define BUF_SIZE 128
 
 bool gpio_export(unsigned int gpio) {
 	size_t ret;
@@ -38,7 +40,9 @@ bool gpio_export(unsigned int gpio) {
 	loff_t off = 0;
 	struct file *fp;
 
-	char buf[64];
+	char buf[BUF_SIZE];
+
+	pr_debug("export called");
 
 	fp = filp_open(GPIO_DIR "export", O_WRONLY, 0);
 	if (IS_ERR(fp)) {
@@ -68,13 +72,15 @@ bool gpio_set_dir(unsigned int gpio, const char *dirStatus) {
 	loff_t off = 0;
 	struct file *fp;
 
-	char buf[64];
+	char buf[BUF_SIZE];
+
+	pr_debug("set_dir called");
 
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/direction", gpio);
 
 	fp = filp_open(buf, O_WRONLY, 0);
 	if (IS_ERR(fp)) {
-		pr_err("error: gpio/direction open");
+		pr_err("error: %s open", buf);
 		return false;
 	}
 
@@ -85,7 +91,7 @@ bool gpio_set_dir(unsigned int gpio, const char *dirStatus) {
 	ret = kernel_write(fp, dirStatus, len, &off);
 #endif /* SHREK_ON_TX2 */
 	if (ret != len) {
-		pr_err("error: gpio/direction open");
+		pr_err("error: %s write", buf);
 		return false;
 	}
 
@@ -100,17 +106,21 @@ bool gpio_set_value(unsigned int gpio, const char *value) {
 	loff_t off = 0;
 	struct file *fp;
 
-	char buf[64];
+	//char buf[BUF_SIZE] = GPIO_DIR "gpio396/value";
+	char buf[BUF_SIZE];
+
+	pr_debug("set_value called");
 
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/value", gpio);
+	pr_debug("snprintf %s", buf);
 
 	fp = filp_open(buf, O_WRONLY, 0);
 	if (IS_ERR(fp)) {
-		pr_err("error: gpio/value open");
-		pr_err("%s", buf);
+		pr_err("error: %s open", buf);
 		return false;
 	}
 
+	pr_debug("set_value value:%s", value);
 	len = strlen(value);
 #ifdef SHREK_ON_TX2
 	ret = kernel_write(fp, value, len, off);
@@ -118,7 +128,7 @@ bool gpio_set_value(unsigned int gpio, const char *value) {
 	ret = kernel_write(fp, value, len, &off);
 #endif /* SHREK_ON_TX2 */
 	if (ret != len) {
-		pr_err("error: gpio/value write");
+		pr_err("error: %s write", buf);
 		return false;
 	}
 
@@ -133,7 +143,9 @@ bool gpio_unexport(unsigned int gpio) {
 	loff_t off = 0;
 	struct file *fp;
 
-	char buf[64];
+	char buf[BUF_SIZE];
+
+	pr_debug("unexport called");
 
 	fp = filp_open(GPIO_DIR "unexport", O_WRONLY, 0);
 	if (IS_ERR(fp)) {
@@ -157,37 +169,42 @@ bool gpio_unexport(unsigned int gpio) {
 	return true;
 }
 
-int gpio_read_value(unsigned int gpio) {
+bool gpio_read_value(const unsigned int gpio, char *value) {
 	size_t ret;
 	size_t len;
 	loff_t off = 0;
 	struct file *fp;
 
-	char buf[64];
-	int value;
+	char buf[BUF_SIZE];
+	//int value;
+	
+	pr_debug("read value called");
 
 	snprintf(buf, sizeof(buf), GPIO_DIR "gpio%d/value", gpio);
 
 	fp = filp_open(buf, O_RDONLY, 0);
 	if (IS_ERR(fp)) {
 		pr_err("error: gpio/value open");
-		return -1;
+		pr_err("%s", buf);
+		return false;
 	}
 
     len = strlen(buf);
 #ifdef SHREK_ON_TX2
-    ret = kernel_read(fp, off, buf, len);
+    ret = kernel_read(fp, off, value, len);
 #else
-    ret = kernel_read(fp, buf, len, &off);
+    ret = kernel_read(fp, value, len, &off);
 #endif /* SHREK_ON_TX2 */
-	if (ret != len) {
+	//if (ret != len) {
+	if(ret == 0) {
 		pr_err("error: gpio/value read");
-		return -1;
+		pr_err("len %d, ret %d", len, ret);
+		return false;
 	}
-	sscanf(buf, "%d", &value);
+	//sscanf(buf, "%d", &value);
 
 	filp_close(fp, NULL);
 
-	return value;
+	return true;
 }
 

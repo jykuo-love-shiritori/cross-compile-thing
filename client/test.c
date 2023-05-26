@@ -12,8 +12,8 @@ int main() {
 	char data[2];
 
 	fd = open(SHREK_DEV, O_RDWR);
-	lseek(fd, 0, 0);
-	write(fd, "1", 2);
+	lseek(fd, 1, SEEK_SET);
+	write(fd, "0", 2);
 	read(fd, data, 2);
 
     close(fd);

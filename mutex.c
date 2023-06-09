@@ -22,7 +22,7 @@ typedef struct {
 void *callback(void *arg) {
 	pthread_mutex_lock(&mutex);
 
-  char *temp = "0";
+  char temp[2] = "0";
 
   Data *data = (Data *)arg;
 

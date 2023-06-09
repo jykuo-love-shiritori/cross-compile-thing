@@ -23,7 +23,7 @@ typedef struct {
 void *callback(void *arg) {
   sem_wait(&semaphore);
 
-  char *temp = "0";
+  char temp[2] = "0";
 
   Data *data = (Data *)arg;
 

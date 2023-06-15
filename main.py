@@ -3,7 +3,7 @@ from enum import Enum
 from utils import *
 
 class ChiaDuhState(Enum):
-    BO_DAI_JI = 0
+    JING_SHONG = 0
     CHIA_DUH = 1
 
 class BuaDuhState(Enum):
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         sleep(0.5)
         post("台灣話")
 
-        chiaDuhState = ChiaDuhState.BO_DAI_JI
+        chiaDuhState = ChiaDuhState.JING_SHONG
         prevChiaDuhState = chiaDuhState
 
         buaDuhState = BuaDuhState.BO_DAI_JI
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             # print(f"{chiaDuhState.name}", end="\r")
 
             if Ax > 0.9:
-                chiaDuhState = ChiaDuhState.BO_DAI_JI
+                chiaDuhState = ChiaDuhState.JING_SHONG
             elif 0.9 < gravity < 1.1 and Ay ** 2 + Az ** 2 > 0.9:
                 chiaDuhState = ChiaDuhState.CHIA_DUH
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             
 
             if chiaDuhState != prevChiaDuhState:
-                if chiaDuhState == ChiaDuhState.BO_DAI_JI:
+                if chiaDuhState == ChiaDuhState.JING_SHONG:
                     post("甘溫！")
 
                 if chiaDuhState == ChiaDuhState.CHIA_DUH:
